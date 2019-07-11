@@ -19,10 +19,11 @@ class Tradu : public Producao{
     string idiomaTraducao;
 
 public:
-    Tradu(const string &string1, string &string2, const string &titulo, const string &idioma,
+    Tradu(const string &string1, string &string2, int const& subTipo, const string &titulo, const string &idioma,
           const string &natureza, const string &editora, const string &idiomaTraducao);
     void print(ostream& os);
     virtual ~Tradu();
+    virtual bool operator<(Producao& auxiliar);
 };
 
 

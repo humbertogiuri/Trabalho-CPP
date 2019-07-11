@@ -15,12 +15,14 @@ class Artjr : public Producao{
     string idioma;
     string dataDePublicacao;
     string ISSN;
-
+    int subTipo;
 public:
-    Artjr(const string &string1, string &string2, string &string3, const string &titulo, const string &idioma,
+    Artjr(const string &string1, string &string2, string &string3, int const& subTipo,  const string &titulo, const string &idioma,
           const string &dataDePublicacao, const string &issn);
     void print(ostream& os);
     virtual ~Artjr();
+    int getSubTipo();
+    virtual bool operator<(Producao& auxiliar);
 };
 
 

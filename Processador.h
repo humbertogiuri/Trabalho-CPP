@@ -38,7 +38,10 @@ public:
     void mudaCaminhoDoArquivo(const string&);
     void executaComandoRede();
     virtual ~Processador();
-    void teste();
+    void executaComandoPPG(const string& codigo);
+    void executaComandoIES(const string& ies);
+    void executaComandoCsv(const string& codigo, const string& tipoProducao);
+    void executaComandoCsvParticular(const string& codigoPPG, const int& id);
 private:
     int retornaIndiceNoCabecalho(const string&);
     int retornaQuantdadeDproducoesValidasDeTodasAsPPGs();

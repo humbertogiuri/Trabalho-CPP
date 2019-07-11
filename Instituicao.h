@@ -27,6 +27,8 @@ public:
     virtual ~Instituicao();
     string getSigla();
     friend ostream& operator<<(ostream& os, const Instituicao* instituicao);
+    void ordenaPPGs();
+    void imprimirPGGsFormatadas();
 };
 
 

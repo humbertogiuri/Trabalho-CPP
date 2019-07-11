@@ -41,7 +41,7 @@ void Processador::PreencheListaDePPGs() {
             string paginaInical = linha[this -> retornaIndiceNoCabecalho("NR_PAGINA_INICIAL")];
             string paginaFinal = linha[this -> retornaIndiceNoCabecalho("NR_PAGINA_FINAL")];
 
-            producaoAtual = new Anais(cidade, paginaInical, paginaFinal, natureza, titulo, evento, idioma);
+            producaoAtual = new Anais(cidade, paginaInical, paginaFinal, 8, natureza, titulo, evento, idioma);
         }
 
         else if(idSubtipo == "9") { //caso seja artjr
@@ -53,7 +53,7 @@ void Processador::PreencheListaDePPGs() {
             string paginaInicial = linha[this -> retornaIndiceNoCabecalho("NR_PAGINA_INICIAL")];
             string paginaFinal = linha[this -> retornaIndiceNoCabecalho("NR_PAGINA_FINAL")];
 
-            producaoAtual = new Artjr(cidade, paginaInicial, paginaFinal, titulo, idioma, dataDePublicacao, ISSN);
+            producaoAtual = new Artjr(cidade, paginaInicial, paginaFinal, 9, titulo, idioma, dataDePublicacao, ISSN);
         }
 
         else if(idSubtipo == "25") { //caso seja artpe
@@ -68,7 +68,7 @@ void Processador::PreencheListaDePPGs() {
             string serie = linha[this -> retornaIndiceNoCabecalho("NR_SERIE")];
             string volume = linha[this -> retornaIndiceNoCabecalho("NR_VOLUME")];
 
-            producaoAtual = new Artpe(cidade, paginaInicial, paginaFinal, natureza, idioma, editora, volume, fasciculo, serie, ISSN);
+            producaoAtual = new Artpe(cidade, paginaInicial, paginaFinal, 25, natureza, idioma, editora, volume, fasciculo, serie, ISSN);
         }
 
         else if(idSubtipo == "26") { //caso seja Livro
@@ -81,7 +81,7 @@ void Processador::PreencheListaDePPGs() {
             string titulo = linha[this -> retornaIndiceNoCabecalho("NM_TITULO")];
             string cidadeLivro = linha[this -> retornaIndiceNoCabecalho("NM_CIDADE_PAIS")];
 
-            producaoAtual = new Livro(cidade, pagina, natureza, idioma, titulo, ISBN, editora);
+            producaoAtual = new Livro(cidadeLivro, pagina, 26, natureza, idioma, titulo, ISBN, editora);
         }
 
         else if(idSubtipo == "10") { //caso seja Outro
@@ -91,7 +91,7 @@ void Processador::PreencheListaDePPGs() {
             string editora = linha[this -> retornaIndiceNoCabecalho("NM_EDITORA")];
             string pagina = linha[this -> retornaIndiceNoCabecalho("NR_PAGINAS")];
 
-            producaoAtual = new Outro(cidade, pagina, natureza, idioma, editora);
+            producaoAtual = new Outro(cidade, pagina, 10, natureza, idioma, editora);
         }
 
         else if(idSubtipo == "28") { //caso seja Partmu
@@ -101,7 +101,7 @@ void Processador::PreencheListaDePPGs() {
             string editora = linha[this -> retornaIndiceNoCabecalho("NM_EDITORA")];
             string pagina = linha[this -> retornaIndiceNoCabecalho("NR_PAGINAS")];
 
-            producaoAtual = new Partmu(cidade, pagina, natureza, editora, formacaoInstrumental);
+            producaoAtual = new Partmu(cidade, pagina, 28, natureza, editora, formacaoInstrumental);
         }
 
         else if(idSubtipo == "21") { //caso seja Tradu
@@ -113,7 +113,7 @@ void Processador::PreencheListaDePPGs() {
             string idiomaTraducao = linha[this -> retornaIndiceNoCabecalho("DS_IDIOMA_TRADUCAO")];
             string pagina = linha[this -> retornaIndiceNoCabecalho("NR_PAGINAS")];
 
-            producaoAtual = new Tradu(cidade, pagina, titulo, idioma, natureza, editora, idiomaTraducao);
+            producaoAtual = new Tradu(cidade, pagina, 21, titulo, idioma, natureza, editora, idiomaTraducao);
         }
 
         if(PPGs.find(codigoPPG) == PPGs.end()) {
@@ -127,6 +127,8 @@ void Processador::PreencheListaDePPGs() {
 
         this -> PPGs.find(codigoPPG) -> second -> adicionaInstituicao(instituicaoAtual);
         this -> PPGs.find(codigoPPG) -> second -> adicionaProducao(producaoAtual);
+
+        this -> instituicoes.find(nomeFaculdade + sigla) -> second -> adicionaPPG(ppgAtual);
 
         linha = this -> leitor -> proximaLinhaDoArquivo();
     }
@@ -188,7 +190,16 @@ void Processador::mudaCaminhoDoArquivo(const string &novoCaminho) {
     this -> leitor ->setArquivoCsv(novoCaminho);
 }
 
-Processador::~Processador() {}
+Processador::~Processador() {
+    delete(this -> leitor);
+    for(auto& iterator : this -> PPGs) {
+        delete(iterator.second);
+    }
+
+    for(auto& iterator : this -> instituicoes) {
+        delete(iterator.second);
+    }
+}
 
 bool comparaPPGs(PPG *ppg1, PPG *ppg2) {
     return stringCompare(ppg1 -> getCodigo(), ppg2 -> getCodigo());
@@ -213,12 +224,99 @@ void Processador::executaComandoRede() {
     }
 }
 
-void Processador::teste() {
-    int contador = 0;
-    for(auto& iterator : this -> PPGs) {
-        iterator.second -> imprimirVetorDInstituicoes();
-        contador++;
+void Processador::executaComandoPPG(const string &codigo) {
+    if(this -> PPGs.find(codigo) == this -> PPGs.end()) {
+        throw ("PPG nao encontrado.");
     }
-    cout << contador;
+
+    PPG* ppgRequerida = this -> PPGs . find(codigo) -> second;
+    cout << ppgRequerida;
 }
+
+bool comparaInstituicaos(Instituicao *instituicao1, Instituicao *instituicao2) {
+    int cmp = instituicao1 -> getSigla().compare(instituicao2 -> getSigla());
+    if(cmp < 0) return true; else if(cmp > 0) return false;
+    cmp = instituicao1 -> getNome().compare(instituicao2 -> getNome());
+    if(cmp < 0) return true; else if(cmp > 0) return false;
+    return false;
+}
+
+void Processador::executaComandoIES(const string &ies) {
+    vector<Instituicao*> instituicoesRequeridas;
+
+    for(auto& iterator : this -> instituicoes) {
+        if(iterator.second -> getSigla() == ies) {
+            instituicoesRequeridas.push_back((iterator.second));
+        }
+    }
+    if(instituicoesRequeridas.size() == 0) {
+        throw("IES nao encontrada.");
+    }
+
+    sort(instituicoesRequeridas.begin(), instituicoesRequeridas.end(), comparaInstituicaos);
+
+    for(auto& iterator : instituicoesRequeridas) {
+        iterator -> ordenaPPGs();
+    }
+
+    for(auto& iterator : instituicoesRequeridas) {
+        cout << iterator -> getNome() << " (" << iterator -> getSigla() << "):" << endl;
+        iterator -> imprimirPGGsFormatadas();
+    }
+}
+
+void Processador::executaComandoCsv(const string &codigo, const string &tipoProducao) {
+    if(this -> PPGs.find(codigo) == this -> PPGs.end()) {
+        throw("PPG nao encontrado.");
+    }
+
+    else if(tipoProducao == "anais") {
+        cout << "Natureza;Titulo;Idioma;Evento;Cidade;Paginas" << endl;
+        this -> executaComandoCsvParticular(codigo, 8);
+    }
+
+    else if(tipoProducao == "artjr") {
+        this -> executaComandoCsvParticular(codigo, 9);
+    }
+    else if(tipoProducao == "artpe") {
+        cout << "Natureza;Idioma;Editora;Cidade;Volume;Fasciculo;Serie;ISSN;Paginas" << endl;
+        this -> executaComandoCsvParticular(codigo, 25);
+    }
+    else if(tipoProducao == "livro") {
+        cout << "Natureza;Titulo;Idioma;Editora;Cidade;ISBN;Paginas" << endl;
+        this -> executaComandoCsvParticular(codigo, 26);
+    }
+    else if(tipoProducao == "outro") {
+        cout << "Natureza;Idioma;Editora;Cidade;Paginas" << endl;
+        this -> executaComandoCsvParticular(codigo, 10);
+    }
+    else if(tipoProducao == "partmu") {
+        cout << "Natureza;Editora;Cidade;Formacao;Paginas" << endl;
+        this->executaComandoCsvParticular(codigo, 28);
+    }
+    else if(tipoProducao == "tradu") {
+        cout << "Natureza;Titulo;Idioma;Editora;Cidade;Traducao;Paginas" << endl;
+        this->executaComandoCsvParticular(codigo, 21);
+    }
+    else {
+        throw ("Tipo invalido.");
+    }
+}
+
+void Processador::executaComandoCsvParticular(const string &codigoPPG, const int& id) {
+
+    vector<Producao*> producoes;
+
+    for(auto& iterator : this -> PPGs) {
+        if(iterator.second -> getCodigo() == codigoPPG) {
+            producoes = iterator.second -> retornaVectorProducaoRequerida(id);
+        }
+    }
+
+    sort(producoes.begin(), producoes.end(), PPG::comparaProducaoSort);
+    for(auto& iterator : producoes) {
+        iterator -> print(cout);
+    }
+}
+
 

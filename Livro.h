@@ -16,10 +16,11 @@ class Livro : public Producao{
     string editora;
 
 public:
-    Livro(const string &string1, string &string2, const string &natureza, const string &idioma, const string &titulo,
+    Livro(const string &string1, string &string2, int const& subTipo, const string &natureza, const string &idioma, const string &titulo,
           const string &isbn, const string &editora);
     void print(ostream& os);
     virtual ~Livro();
+    virtual bool operator<(Producao& auxiliar);
 };
 
 

@@ -13,7 +13,7 @@ using namespace cpp_util;
 
 int main() {
 
-    ///home/humberto/Área de Trabalho/DADOS DO TRABALHO/
+        ///home/humberto/Área de Trabalho/DADOS DO TRABALHO/
 
     try {
         string caminho;
@@ -36,6 +36,30 @@ int main() {
         if(comando == "rede") {
            processador -> executaComandoRede();
         }
+        else if(comando == "ppg") {
+            string codigo;
+            cin >> codigo;
+            processador -> executaComandoPPG(codigo);
+        }
+
+        else if(comando == "ies") {
+            string sigla;
+            cin >> sigla;
+            processador -> executaComandoIES(sigla);
+        }
+
+        else if(comando == "csv") {
+            string codigo;
+            string tipoProducao;
+            cin >> codigo;
+            cin >> tipoProducao;
+            processador -> executaComandoCsv(codigo, tipoProducao);
+        }
+        else {
+            throw("Comando desconhecido.");
+        }
+
+        delete(processador);
 
     }
     catch(const char* msg) {

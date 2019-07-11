@@ -4,10 +4,10 @@
 
 #include "Producao.h"
 
-Producao::Producao(const string &cidade, string& inicial, string& final) {
+Producao::Producao(const string &cidade, string& inicial, string& final, int const& subTipo) {
     this -> cidade = cidade;
     if (validaPagina(inicial) && validaPagina(final)) {
-        int total = stol(final) - stol(inicial) + 1;
+        long total = stol(final) - stol(inicial) + 1;
         if (total > 2000 || total < 0) {
             this->quantidaDePaginas = 0;
         }
@@ -16,20 +16,22 @@ Producao::Producao(const string &cidade, string& inicial, string& final) {
         }
     }
     else this -> quantidaDePaginas = 0;
+    this -> subTipo = subTipo;
 }
 
-Producao::Producao(const string &cidade, string & paginas) {
+Producao::Producao(const string &cidade, string & paginas, int const& subTipo) {
     this -> cidade = cidade;
+    this -> subTipo = subTipo;
     if (validaPagina(paginas)) {
-        int total = stol(paginas);
+        long total = stol(paginas);
         if (total > 2000 || total < 0) {
-            this->quantidaDePaginas = -1;
+            this->quantidaDePaginas = 0;
         }
         else {
             this->quantidaDePaginas = total;
         }
     }
-    else this -> quantidaDePaginas = -1;
+    else this -> quantidaDePaginas = 0;
 }
 
 int Producao::getQuantidadeDePaginas() {
@@ -49,4 +51,17 @@ bool Producao::validaPagina(string &paginaRequerida) {
 
 Producao::~Producao() {}
 
+int Producao::getSubTipo() {
+    return this -> subTipo;
+}
+
+string Producao::getCidade() {
+    return this -> cidade;
+}
+
+string Producao::toString() {
+    stringstream texto;
+    print(texto);
+    return texto.str();
+};
 

@@ -17,10 +17,11 @@ class Artpe : public Producao{
     string ISSN;
 
 public:
-    Artpe(const string &string1, string &string2, string &string3, const string &natureza, const string &idioma,
+    Artpe(const string &string1, string &string2, string &string3, int const& subTipo, const string &natureza, const string &idioma,
           const string &editora, string& volume, string& fasciculo, string& serie, const string &issn);
     void print(ostream& os);
     virtual ~Artpe();
+    virtual bool operator<(Producao& auxiliar);
 };
 
 

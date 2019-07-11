@@ -16,10 +16,11 @@ using namespace cpp_util;
 class Producao {
     string cidade;
     int quantidaDePaginas;
+    int subTipo;
 
 public:
-    Producao(const string&, string&);
-    Producao(const string&, string&, string&);
+    Producao(const string&, string&, int const& subTipo);
+    Producao(const string&, string&, string&, int const& subTipo);
     virtual ~Producao();
     virtual void print(ostream&) = 0;
     friend ostream&operator<<(ostream& ostream1, Producao& producao) {
@@ -27,7 +28,10 @@ public:
         return ostream1;
     }
     int getQuantidadeDePaginas();
-
+    int getSubTipo();
+    string getCidade();
+    virtual string toString();
+    virtual bool operator<(Producao& auxiliar) = 0;
 private:
     bool validaPagina(string&);
 };

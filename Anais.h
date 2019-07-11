@@ -18,10 +18,11 @@ class Anais : public Producao{
     string idioma;
 
 public:
-    Anais(const string &string1, string &string2, string &string3, const string &natureza,
+    Anais(const string &string1, string &string2, string &string3, int const& subTipo, const string &natureza,
           const string &titulo, const string &evento, const string &idioma);
     virtual ~Anais();
     virtual void print(ostream&);
+    virtual bool operator<(Producao& auxiliar);
 };
 
 
