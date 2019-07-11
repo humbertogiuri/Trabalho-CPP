@@ -49,11 +49,15 @@ void Processador::PreencheListaDePPGs() {
             string titulo = linha[this -> retornaIndiceNoCabecalho("NM_TITULO")];
             string idioma = linha[this -> retornaIndiceNoCabecalho("DS_IDIOMA")];
             string dataDePublicacao = linha[this -> retornaIndiceNoCabecalho("DT_PUBLICACAO")];
+            if(!validDate(dataDePublicacao, DATE_FORMAT_PT_BR_SHORT)) {
+                dataDePublicacao = "0/00/0000";
+            }
+            time_t data = parseDate(dataDePublicacao, DATE_FORMAT_PT_BR_SHORT);
             string ISSN = linha[this -> retornaIndiceNoCabecalho("DS_ISSN")];
             string paginaInicial = linha[this -> retornaIndiceNoCabecalho("NR_PAGINA_INICIAL")];
             string paginaFinal = linha[this -> retornaIndiceNoCabecalho("NR_PAGINA_FINAL")];
 
-            producaoAtual = new Artjr(cidade, paginaInicial, paginaFinal, 9, titulo, idioma, dataDePublicacao, ISSN);
+            producaoAtual = new Artjr(cidade, paginaInicial, paginaFinal, 9, titulo, idioma, data, ISSN);
         }
 
         else if(idSubtipo == "25") { //caso seja artpe
@@ -276,6 +280,7 @@ void Processador::executaComandoCsv(const string &codigo, const string &tipoProd
     }
 
     else if(tipoProducao == "artjr") {
+        cout << "Titulo;Idioma;Cidade;Data;ISSN;Paginas" << endl;
         this -> executaComandoCsvParticular(codigo, 9);
     }
     else if(tipoProducao == "artpe") {

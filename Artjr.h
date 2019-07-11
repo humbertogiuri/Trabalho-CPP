@@ -7,18 +7,20 @@
 
 #include <string>
 #include "Producao.h"
+#include "DateUtils.h"
+#include <ctime>
 
 using namespace std;
 
 class Artjr : public Producao{
     string titulo;
     string idioma;
-    string dataDePublicacao;
+    time_t dataDePublicacao;
     string ISSN;
     int subTipo;
 public:
     Artjr(const string &string1, string &string2, string &string3, int const& subTipo,  const string &titulo, const string &idioma,
-          const string &dataDePublicacao, const string &issn);
+          const time_t& dataDePublicacao, const string &issn);
     void print(ostream& os);
     virtual ~Artjr();
     int getSubTipo();
